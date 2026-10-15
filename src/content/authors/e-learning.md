@@ -7,6 +7,7 @@ title: Full Stack Developer
 location: Balikpapan, Indonesia
 website: https://github.com/MRBl4z3
 github: https://github.com/MRBl4z3
+instagram: https://www.instagram.com/bdiwjesgw/
 linkedin: https://www.linkedin.com/in/rionurramadhan
 portfolio: https://github.com/MRBl4z3
 sponsor: https://saweria.co/Royyss
