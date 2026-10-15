@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { BASE_PATH } from './config/site';
 
 const imageRefiner = (val: string | undefined) => {
   if (!val) return true;
@@ -14,10 +15,17 @@ const imageRefiner = (val: string | undefined) => {
   return false;
 };
 
-const imageSchema = z.string().optional().refine(imageRefiner, {
-  message:
-    'Local image path must exist in the public folder or be a valid HTTP URL',
-});
+const withBase = (val: string | undefined) =>
+  val && val.startsWith('/') && !val.startsWith(`${BASE_PATH}/`) ? `${BASE_PATH}${val}` : val;
+
+const imageSchema = z
+  .string()
+  .optional()
+  .refine(imageRefiner, {
+    message:
+      'Local image path must exist in the public folder or be a valid HTTP URL',
+  })
+  .transform(withBase);
 
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),
@@ -71,6 +79,7 @@ const authors = defineCollection({
     website: z.string().optional(),
     github: z.string().optional(),
     twitter: z.string().optional(),
+    instagram: z.string().optional(),
     linkedin: z.string().optional(),
     portfolio: z.string().optional(),
     sponsor: z.string().optional(),
