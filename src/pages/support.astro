@@ -1,0 +1,84 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { OWNER } from '@/config/site';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { HelpCircleIcon, Bug01Icon, Chat01Icon, Mail01Icon, Coffee02Icon } from '@hugeicons/core-free-icons';
+import { MagicCard } from '@/components/ui/magic-card';
+---
+
+<AppShell title="Support | Belajar Kode" description="Get support or support the Belajar Kode. Contact us for help." keywords="support, help, contact, bug report, discussions, community">
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: 'Support',
+      description: 'Get support or support the Belajar Kode. Contact us for help.',
+      url: 'https://mrbl4z3.github.io/belajarkode/support/',
+    })} />
+  </Fragment>
+  <div class="px-6 py-12">
+    <div class="max-w-2xl mx-auto text-center">
+      <HugeiconsIcon icon={HelpCircleIcon} className="text-5xl text-ds-tertiary mb-4 mx-auto block" size={48} />
+      <h1 class="text-3xl font-bold text-ds-on-surface mb-3">Support</h1>
+      <p class="text-ds-on-surface-variant text-lg mb-8">
+        Need help? Have a question? Want to contribute? Here's how to reach us.
+      </p>
+
+      <div class="grid gap-4 sm:grid-cols-2 text-left">
+        <MagicCard client:load className="rounded-xl w-full" gradientSize={160} gradientColor="var(--ds-magic-glow)">
+          <a
+            href={`${OWNER.github}/issues`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="p-5 group hover:no-underline w-full h-full flex flex-col justify-start bg-transparent border-0"
+          >
+            <HugeiconsIcon icon={Bug01Icon} className="text-2xl text-ds-primary mb-2 block shrink-0" size={24} />
+            <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Report an Issue</h2>
+            <p class="text-sm text-ds-on-surface-variant mt-1">Found a bug? Open a GitHub issue.</p>
+          </a>
+        </MagicCard>
+        
+        <MagicCard client:load className="rounded-xl w-full" gradientSize={160} gradientColor="var(--ds-magic-glow)">
+          <a
+            href={`${OWNER.github}/discussions`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="p-5 group hover:no-underline w-full h-full flex flex-col justify-start bg-transparent border-0"
+          >
+            <HugeiconsIcon icon={Chat01Icon} className="text-2xl text-ds-secondary mb-2 block shrink-0" size={24} />
+            <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Discussions</h2>
+            <p class="text-sm text-ds-on-surface-variant mt-1">Ask questions in GitHub Discussions.</p>
+          </a>
+        </MagicCard>
+
+        <MagicCard client:load className="rounded-xl w-full" gradientSize={160} gradientColor="var(--ds-magic-glow)">
+          <a
+            href={OWNER.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="p-5 group hover:no-underline w-full h-full flex flex-col justify-start bg-transparent border-0"
+          >
+            <HugeiconsIcon icon={Mail01Icon} className="text-2xl text-ds-info mb-2 block shrink-0" size={24} />
+            <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Instagram</h2>
+            <p class="text-sm text-ds-on-surface-variant mt-1">Reach out on Instagram.</p>
+          </a>
+        </MagicCard>
+
+        <MagicCard client:load className="rounded-xl w-full" gradientSize={160} gradientColor="var(--ds-magic-glow)">
+          <a
+            href={OWNER.support}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="p-5 group hover:no-underline w-full h-full flex flex-col justify-start bg-transparent border-0"
+          >
+            <HugeiconsIcon icon={Coffee02Icon} className="text-2xl text-ds-tertiary mb-2 block shrink-0" size={24} />
+            <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Financial Support</h2>
+            <p class="text-sm text-ds-on-surface-variant mt-1">Support the project financially.</p>
+          </a>
+        </MagicCard>
+      </div>
+    </div>
+  </div>
+</AppShell>

@@ -1,0 +1,45 @@
+'use client';
+import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
+
+interface PostCardSkeletonProps {
+  count?: number;
+  compact?: boolean;
+}
+
+function SingleSkeleton({ compact }: { compact?: boolean }) {
+  return (
+    <div
+      className={cn(
+        'card-ds overflow-hidden',
+        compact ? 'p-4' : 'flex gap-4 p-5',
+      )}
+    >
+      {!compact && <Skeleton className="shrink-0 w-28 h-20 rounded-lg bg-ds-surface-high" />}
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-3 w-24 bg-ds-surface-high" />
+        <Skeleton className="h-4 w-4/5 bg-ds-surface-high" />
+        {!compact && <Skeleton className="h-3 w-full bg-ds-surface-high" />}
+        <Skeleton className="h-3 w-2/3 bg-ds-surface-high" />
+        <div className="flex gap-2 pt-1">
+          <Skeleton className="h-4 w-16 rounded-full bg-ds-surface-high" />
+          <Skeleton className="h-4 w-12 rounded-full bg-ds-surface-high" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function PostCardSkeleton({
+  count = 3,
+  compact = false,
+}: PostCardSkeletonProps) {
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: count }).map((_el, idx) => (
+        <SingleSkeleton key={`skel-${String(idx)}`} compact={compact} />
+      ))}
+    </div>
+  );
+}
+

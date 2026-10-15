@@ -1,0 +1,125 @@
+---
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Globe02Icon,
+  GithubIcon,
+  NewTwitterIcon,
+  InstagramIcon,
+  LinkedinIcon,
+  FavouriteIcon,
+  HandHeartIcon,
+} from '@hugeicons/core-free-icons';
+import { BASE_PATH } from '@/config/site';
+import { getInitials } from '@/lib/utils';
+import { MagicCard } from '@/components/ui/magic-card';
+
+export interface AuthorInfo {
+  slug: string;
+  name: string;
+  title?: string;
+  avatar?: string;
+  bio?: string;
+  location?: string;
+  website?: string;
+  github?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  portfolio?: string;
+  sponsor?: string;
+  support?: string;
+}
+
+interface Props {
+  authors: AuthorInfo[];
+}
+
+const { authors } = Astro.props;
+
+function getSocialLinks(author: AuthorInfo) {
+  const links: { key: string; icon: any; href: string; label: string }[] = [];
+  if (author.website) links.push({ key: 'website', icon: Globe02Icon, href: author.website, label: 'Website' });
+  if (author.github) links.push({ key: 'github', icon: GithubIcon, href: author.github, label: 'GitHub' });
+  if (author.twitter) links.push({ key: 'twitter', icon: NewTwitterIcon, href: author.twitter, label: 'Twitter / X' });
+  if (author.instagram) links.push({ key: 'instagram', icon: InstagramIcon, href: author.instagram, label: 'Instagram' });
+  if (author.linkedin) links.push({ key: 'linkedin', icon: LinkedinIcon, href: author.linkedin, label: 'LinkedIn' });
+  if (author.sponsor) links.push({ key: 'sponsor', icon: FavouriteIcon, href: author.sponsor, label: 'Sponsor' });
+  if (author.support) links.push({ key: 'support', icon: HandHeartIcon, href: author.support, label: 'Support' });
+  return links;
+}
+---
+
+{authors.length > 0 && (
+  <div class="mt-10 pt-6 border-t border-ds-outline-variant">
+    <h2 class="text-lg font-semibold text-ds-on-surface mb-4">
+      {authors.length === 1 ? 'About the Author' : 'About the Authors'}
+    </h2>
+    <div class="space-y-4">
+      {authors.map((author) => {
+        const socialLinks = getSocialLinks(author);
+        return (
+          <MagicCard client:load className="rounded-xl w-full" gradientSize={180} gradientColor="var(--ds-magic-glow)">
+            <div class="p-5 flex flex-col sm:flex-row items-start gap-4 w-full h-full bg-transparent border-0">
+              {/* Avatar */}
+              <a href={`${BASE_PATH}/authors/${author.slug}/`} class="shrink-0 relative overflow-hidden rounded-full w-16 h-16 ring-2 ring-ds-outline-variant hover:ring-ds-primary transition-all">
+                {author.avatar ? (
+                  <img
+                    src={author.avatar}
+                    alt={author.name}
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                    crossorigin="anonymous"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                  />
+                ) : null}
+                <div class="w-full h-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-lg font-bold" style={author.avatar ? "display: none;" : "display: flex;"}>
+                  {getInitials(author.name)}
+                </div>
+              </a>
+
+              {/* Info */}
+              <div class="flex-1 min-w-0">
+                <a
+                  href={`${BASE_PATH}/authors/${author.slug}/`}
+                  class="group"
+                >
+                  <h3 class="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-base">
+                    {author.name}
+                  </h3>
+                </a>
+                {author.title && (
+                  <p class="text-xs text-ds-on-surface-variant mt-0.5">
+                    {author.title}
+                  </p>
+                )}
+                {author.bio && (
+                  <p class="text-sm text-ds-text-muted mt-2 leading-relaxed line-clamp-3">
+                    {author.bio}
+                  </p>
+                )}
+
+                {/* Social links */}
+                {socialLinks.length > 0 && (
+                  <div class="flex flex-wrap gap-2 mt-3">
+                    {socialLinks.map((link) => (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={link.label}
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs border border-ds-outline-variant text-ds-on-surface-variant hover:border-ds-primary hover:text-ds-on-surface hover:bg-ds-surface-high transition-all duration-150"
+                      >
+                        <HugeiconsIcon icon={link.icon} className="w-3.5 h-3.5" size={14} />
+                        <span class="hidden sm:inline">{link.label}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </MagicCard>
+        );
+      })}
+    </div>
+  </div>
+)}

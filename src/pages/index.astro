@@ -1,0 +1,370 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { HeroStats } from '@/components/home/HeroStats';
+import { FeaturedBento } from '@/components/home/FeaturedBento';
+import { TrendingFeed } from '@/components/home/TrendingFeed';
+import { CategoryCloud } from '@/components/home/CategoryCloud';
+import { TagCloud } from '@/components/home/TagCloud';
+import { AuthorList } from '@/components/home/AuthorList';
+import { SponsorBanner } from '@/components/home/SponsorBanner';
+import {
+  getAllAuthors,
+  getAllCategories,
+  getAllPosts,
+  getAllTags,
+  getFeaturedPosts,
+  getPostReadingTime,
+  getPostStats,
+  getAllNews,
+} from '@/lib/posts';
+import { SITE_CONFIG, BASE_PATH } from '@/config/site';
+import { getCollection } from 'astro:content';
+import { MagicCard } from '@/components/ui/magic-card';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { News01Icon } from '@hugeicons/core-free-icons';
+import { resolveImageUrl } from '@/lib/utils';
+
+// Fetch all data
+const [featuredPosts, allPosts, categories, tags, authors, stats, newsEntries] =
+  await Promise.all([
+    getFeaturedPosts(),
+    getAllPosts(),
+    getAllCategories(),
+    getAllTags(),
+    getAllAuthors(),
+    getPostStats(),
+    getAllNews(),
+  ]);
+
+const sevenDaysAgo = new Date();
+sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+const hotNews = newsEntries
+  .filter((n) => n.data.datePublished.getTime() >= sevenDaysAgo.getTime())
+  .sort((a, b) => b.data.datePublished.valueOf() - a.data.datePublished.valueOf())
+  .slice(0, 5);
+
+const latestNews = [...newsEntries]
+  .sort((a, b) => b.data.datePublished.valueOf() - a.data.datePublished.valueOf())
+  .slice(0, 4);
+
+// Map to component-friendly shapes
+const featuredForBento = featuredPosts.slice(0, 3).map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+}));
+
+const trendingPosts = allPosts.slice(0, 6).map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  authors: p.data.authors,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+}));
+
+const categoryItems = categories
+  .map((c) => ({
+    slug: c.id.replace(/\.md$/, ''),
+    title: c.data.title,
+    count: allPosts.filter((p) =>
+      p.data.categories.includes(c.id.replace(/\.md$/, '')),
+    ).length,
+  }))
+  .filter((c) => c.count > 0)
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
+
+const tagItems = tags
+  .map((t) => ({
+    slug: t.id.replace(/\.md$/, ''),
+    title: t.data.title,
+    count: allPosts.filter((p) =>
+      p.data.tags.includes(t.id.replace(/\.md$/, '')),
+    ).length,
+  }))
+  .filter((t) => t.count > 0)
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
+
+// Top 5 authors by post count (not just featured)
+const authorItems = authors
+  .map((a) => ({
+    slug: a.id.replace(/\.md$/, ''),
+    name: a.data.name,
+    title: a.data.title,
+    avatar: a.data.avatar,
+    postCount: allPosts.filter((p) =>
+      p.data.authors.includes(a.id.replace(/\.md$/, '')),
+    ).length,
+  }))
+  .sort((a, b) => b.postCount - a.postCount)
+  .slice(0, 5);
+
+const extendedStats = {
+  ...stats,
+  news: newsEntries.length,
+};
+---
+
+<AppShell
+  title="Curated Developer Resources and Tools"
+  description={SITE_CONFIG.description}
+>
+  <!-- Hero Stats -->
+  <HeroStats stats={extendedStats} client:load />
+
+  <!-- Featured Bento -->
+  {featuredForBento.length > 0 && (
+    <FeaturedBento posts={featuredForBento} client:load />
+  )}
+
+  <!-- Main content + Right sidebar area -->
+  <div class="px-4 md:px-6 pb-12">
+    <div class="max-w-320 mx-auto">
+      {/* Mobile-only Hot News section */}
+      {hotNews.length > 0 && (
+        <div class="lg:hidden mb-8">
+          <MagicCard
+            className="rounded-xl"
+            gradientSize={150}
+            gradientColor="var(--ds-magic-glow)"
+            gradientFrom="var(--ds-magic-glow-from)"
+            gradientTo="var(--ds-magic-glow-to)"
+            client:load
+          >
+            <div class="p-5 space-y-4 w-full h-full bg-transparent border-0">
+              <div class="flex items-center justify-between pb-3 border-b border-ds-outline-variant">
+                <h3 class="text-sm font-bold uppercase tracking-widest text-ds-on-surface flex items-center gap-2">
+                  <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                  </span>
+                  Hot News
+                </h3>
+                <a href={`${BASE_PATH}/news/`} class="text-xs text-ds-primary hover:underline font-semibold">View all</a>
+              </div>
+              <div class="space-y-3">
+                {hotNews.map((item) => {
+                  const slug = item.id.replace(/\.md$/, '');
+                  const dateStr = new Date(item.data.datePublished).toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  });
+                  return (
+                    <a
+                      href={`${BASE_PATH}/news/${slug}/`}
+                      class="block group p-2 rounded-lg hover:bg-ds-surface-high/30 transition-all border border-transparent hover:border-ds-outline-variant/30"
+                    >
+                      <div class="flex items-center gap-2 text-[10px] text-ds-text-muted mb-1">
+                        <span class="bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider scale-90">Hot</span>
+                        <span>·</span>
+                        <span>{dateStr}</span>
+                      </div>
+                      <h4 class="font-bold text-xs text-ds-on-surface line-clamp-2 leading-snug">
+                        {item.data.title}
+                      </h4>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </MagicCard>
+        </div>
+      )}
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+        <!-- Trending Feed -->
+        <div class="lg:col-span-2 space-y-10">
+          <TrendingFeed
+            posts={trendingPosts}
+            title="Latest Posts"
+            icon="schedule"
+            viewAllHref={`${BASE_PATH}/posts/`}
+            client:load
+          />
+
+          <!-- Brief News & Updates -->
+          <div class="space-y-6 pt-6">
+            <div class="flex items-center justify-between pb-3 border-b border-ds-outline-variant">
+              <h2 class="text-xl font-extrabold text-ds-on-surface tracking-tight flex items-center gap-2">
+                <span class="p-1 rounded-lg bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center">
+                  <HugeiconsIcon icon={News01Icon} className="w-5 h-5" size={20} client:load />
+                </span>
+                Brief News & Updates
+              </h2>
+              <a href={`${BASE_PATH}/news/`} class="text-xs text-ds-primary hover:underline font-bold">View all news →</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {latestNews.map((item) => {
+                const slug = item.id.replace(/\.md$/, '');
+                const pubDate = new Date(item.data.pubDate ?? item.data.datePublished).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+                });
+                const resolvedThumb = item.data.thumbnail ? resolveImageUrl(item.data.thumbnail) : null;
+                return (
+                  <MagicCard
+                    className="rounded-xl overflow-hidden"
+                    gradientSize={150}
+                    gradientColor="var(--ds-magic-glow)"
+                    gradientFrom="var(--ds-magic-glow-from)"
+                    gradientTo="var(--ds-magic-glow-to)"
+                    client:load
+                  >
+                    <a href={`${BASE_PATH}/news/${slug}/`} class="flex flex-col sm:flex-row gap-4 p-5 h-full hover:bg-ds-surface-high/20 transition-all border-0 bg-transparent">
+                      {resolvedThumb && (
+                        <div class="w-full sm:w-24 sm:h-24 aspect-video sm:aspect-square rounded-lg overflow-hidden shrink-0 border border-ds-outline-variant bg-ds-surface-low flex items-center justify-center">
+                          <img
+                            src={resolvedThumb}
+                            alt={item.data.title}
+                            class="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
+                      <div class="flex-1 min-w-0 flex flex-col justify-between">
+                        <div>
+                          <div class="flex items-center gap-2 text-[10px] text-ds-text-muted mb-1">
+                            <span class="font-bold text-ds-secondary uppercase tracking-wider">{item.data.category || 'News'}</span>
+                            <span>·</span>
+                            <span>{pubDate}</span>
+                          </div>
+                          <h3 class="font-bold text-sm text-ds-on-surface mb-1.5 line-clamp-2 hover:text-ds-primary transition-colors leading-snug">
+                            {item.data.title}
+                          </h3>
+                        </div>
+                        <p class="text-[11px] text-ds-on-surface-variant line-clamp-2 leading-relaxed">
+                          {item.data.description}
+                        </p>
+                      </div>
+                    </a>
+                  </MagicCard>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar content -->
+        <div class="space-y-10">
+          {/* Desktop-only Hot News section */}
+          {hotNews.length > 0 && (
+            <div class="hidden lg:block">
+              <MagicCard
+                className="rounded-xl"
+                gradientSize={150}
+                gradientColor="var(--ds-magic-glow)"
+                gradientFrom="var(--ds-magic-glow-from)"
+                gradientTo="var(--ds-magic-glow-to)"
+                client:load
+              >
+                <div class="p-5 space-y-4 w-full h-full bg-transparent border-0">
+                  <div class="flex items-center justify-between pb-3 border-b border-ds-outline-variant">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-ds-on-surface flex items-center gap-2">
+                      <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                      </span>
+                      Hot News
+                    </h3>
+                    <a href={`${BASE_PATH}/news/`} class="text-xs text-ds-primary hover:underline font-semibold">View all</a>
+                  </div>
+                  <div class="space-y-3">
+                    {hotNews.map((item) => {
+                      const slug = item.id.replace(/\.md$/, '');
+                      const dateStr = new Date(item.data.datePublished).toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      });
+                      return (
+                        <a
+                          href={`${BASE_PATH}/news/${slug}/`}
+                          class="block group p-2 rounded-lg hover:bg-ds-surface-high/30 transition-all border border-transparent hover:border-ds-outline-variant/30"
+                        >
+                          <div class="flex items-center gap-2 text-[10px] text-ds-text-muted mb-1">
+                            <span class="bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider scale-90">Hot</span>
+                            <span>·</span>
+                            <span>{dateStr}</span>
+                          </div>
+                          <h4 class="font-bold text-xs text-ds-on-surface line-clamp-2 leading-snug">
+                            {item.data.title}
+                          </h4>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              </MagicCard>
+            </div>
+          )}
+
+          <div>
+            <CategoryCloud categories={categoryItems} />
+          </div>
+          <div>
+            <AuthorList authors={authorItems} />
+          </div>
+          <div>
+            <SponsorBanner />
+          </div>
+        </div>
+      </div>
+
+      <!-- Tag cloud -->
+      <div class="mt-12 pt-8 border-t border-ds-outline-variant">
+        <TagCloud tags={tagItems} />
+      </div>
+
+      <!-- Mobile Stats (displayed only at the bottom on mobile viewports) -->
+      <div class="lg:hidden mt-10 p-5 rounded-xl border border-ds-outline-variant bg-ds-surface-low/50">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-ds-text-muted mb-4 text-center">
+          Platform Statistics
+        </h3>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center">
+            <span class="block text-base font-extrabold text-ds-primary tracking-tight">{extendedStats.posts}</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-ds-text-muted">Posts</span>
+          </div>
+          <div class="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center">
+            <span class="block text-base font-extrabold text-ds-secondary tracking-tight">{extendedStats.news}</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-ds-text-muted">News</span>
+          </div>
+          <div class="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center">
+            <span class="block text-base font-extrabold text-ds-tertiary tracking-tight">{extendedStats.categories}</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-ds-text-muted">Categories</span>
+          </div>
+          <div class="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center">
+            <span class="block text-base font-extrabold text-ds-info tracking-tight">{extendedStats.tags}</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-ds-text-muted">Tags</span>
+          </div>
+          <div class="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center">
+            <span class="block text-base font-extrabold text-ds-success tracking-tight">{extendedStats.authors}</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-ds-text-muted">Authors</span>
+          </div>
+          <div class="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center">
+            <span class="block text-base font-extrabold text-ds-on-surface tracking-tight">{extendedStats.organisations}</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-ds-text-muted">Orgs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</AppShell>

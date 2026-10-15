@@ -1,0 +1,145 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { PostsFeed } from '@/components/post/PostsFeed';
+import { ListingSidebar } from '@/components/layout/ListingSidebar';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { StarIcon, Clock01Icon, Search01Icon } from '@hugeicons/core-free-icons';
+import {
+  getAllCategories,
+  getAllPosts,
+  getAllTags,
+  getPostReadingTime,
+} from '@/lib/posts';
+import { BASE_PATH, SITE_CONFIG } from '@/config/site';
+
+const allPosts = await getAllPosts();
+const tags = await getAllTags();
+const categories = await getAllCategories();
+
+const tagItems = tags
+  .map((t) => ({
+    slug: t.id.replace(/\.md$/, ''),
+    title: t.data.title,
+    count: allPosts.filter((p) =>
+      p.data.tags.includes(t.id.replace(/\.md$/, '')),
+    ).length,
+  }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
+
+const categoryItems = categories
+  .map((c) => ({
+    slug: c.id.replace(/\.md$/, ''),
+    title: c.data.title,
+    count: allPosts.filter((p) =>
+      p.data.categories.includes(c.id.replace(/\.md$/, '')),
+    ).length,
+  }))
+  .filter((c) => c.count > 0)
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
+
+const posts = allPosts.map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  authors: p.data.authors,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+  sources: p.data.sources,
+  links: p.data.links,
+}));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Developer Resources',
+  description: 'Discover curated developer resources, tutorials, tools, frameworks, and learning materials.',
+  url: `${Astro.url.origin}${BASE_PATH}/posts/`,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: SITE_CONFIG.name,
+    url: `${Astro.url.origin}${BASE_PATH}/`,
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${Astro.url.origin}${BASE_PATH}/` },
+      { '@type': 'ListItem', position: 2, name: 'Posts' },
+    ],
+  },
+};
+---
+
+<AppShell
+  title="Developer Resources, Tutorials, and Tools"
+  description="Discover curated developer resources, tutorials, tools, frameworks, and learning materials hand-picked for the community."
+  keywords="developer resources, tutorials, tools, frameworks, programming, web development, learning materials"
+>
+
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+  </Fragment>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <div class="px-4 md:px-6 py-8">
+    <div class="max-w-320 mx-auto">
+
+      <!-- Breadcrumbs -->
+      <div class="flex items-center gap-2 mb-4 text-sm">
+        <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-text-muted">/</span>
+        <span class="text-sm text-ds-on-surface font-medium">Resources</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-2xl md:text-4xl font-bold text-ds-on-surface tracking-tight mb-2">
+          Developer Resources
+        </h1>
+        <p class="text-ds-on-surface-variant text-base md:text-lg max-w-2xl">
+          Discover curated developer resources, tutorials, tools, frameworks, and learning materials hand-picked for the community.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 mt-4">
+          <a
+            href={`${BASE_PATH}/featured/`}
+            class="inline-flex items-center gap-1.5 text-sm text-ds-primary hover:underline font-medium"
+          >
+            <HugeiconsIcon icon={StarIcon} className="w-3.5 h-3.5" size={14} />
+            Featured
+          </a>
+          <a
+            href={`${BASE_PATH}/latest/`}
+            class="inline-flex items-center gap-1.5 text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
+          >
+            <HugeiconsIcon icon={Clock01Icon} className="w-3.5 h-3.5" size={14} />
+            Latest
+          </a>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <!-- Posts feed -->
+        <div class="lg:col-span-2">
+          {posts.length === 0 ? (
+            <div class="card-ds p-16 text-center">
+              <HugeiconsIcon icon={Search01Icon} className="w-14 h-14 mx-auto mb-4 text-ds-text-muted opacity-30" size={56} />
+              <p class="text-ds-text-muted text-lg">No posts found.</p>
+            </div>
+          ) : (
+            <PostsFeed client:load posts={posts} showSearch={true} />
+          )}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <ListingSidebar type="post" categories={categoryItems} tags={tagItems} client:load />
+        </div>
+      </div>
+    </div>
+  </div>
+</AppShell>

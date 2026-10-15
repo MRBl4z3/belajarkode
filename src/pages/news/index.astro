@@ -1,0 +1,125 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { PostsFeed } from '@/components/post/PostsFeed';
+import { ListingSidebar } from '@/components/layout/ListingSidebar';
+import { getAllNews } from '@/lib/posts';
+import { BASE_PATH, SITE_CONFIG } from '@/config/site';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { StarIcon, Clock01Icon } from '@hugeicons/core-free-icons';
+
+const newsEntries = await getAllNews();
+const sortedNews = [...newsEntries].sort((a, b) => b.data.datePublished.valueOf() - a.data.datePublished.valueOf());
+
+const newsItems = sortedNews.map((n) => ({
+  slug: n.id.replace(/\.md$/, ''),
+  title: n.data.title,
+  description: n.data.description,
+  thumbnail: n.data.thumbnail,
+  categories: n.data.category ? [n.data.category] : [],
+  tags: n.data.tags,
+  authors: n.data.authors,
+  organisations: n.data.organisations ?? [],
+  readingTime: 3,
+  type: 'news' as const,
+  sources: n.data.sources,
+  pubDate: n.data.datePublished.toISOString(),
+}));
+
+// Build news categories and tags count
+const newsTags = Array.from(new Set(newsEntries.flatMap((n) => n.data.tags)));
+const newsCategories = Array.from(
+  new Set(newsEntries.map((n) => n.data.category).filter((c): c is string => !!c))
+);
+
+const tagItems = newsTags
+  .map((tag) => ({
+    slug: tag,
+    title: tag.replace(/-/g, ' '),
+    count: newsEntries.filter((n) => n.data.tags.includes(tag)).length,
+  }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 8);
+
+const categoryItems = newsCategories
+  .map((cat) => ({
+    slug: cat,
+    title: cat.replace(/-/g, ' '),
+    count: newsEntries.filter((n) => n.data.category === cat).length,
+  }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'NewsMediaOrganization',
+  name: SITE_CONFIG.name,
+  url: `${Astro.url.origin}${BASE_PATH}/news/`,
+  logo: `${Astro.url.origin}${BASE_PATH}/logo.png`,
+  sameAs: [
+    'https://github.com/MRBl4z3',
+  ],
+};
+---
+
+<AppShell
+  title="Latest Developer News"
+  description="Stay up to date with the latest developer news, announcements, framework milestones, and tech industry updates."
+  keywords="developer news, software engineering news, tech updates, framework releases"
+>
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+  </Fragment>
+
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <div class="px-4 md:px-6 py-8">
+    <div class="max-w-320 mx-auto">
+      {/* Breadcrumbs */}
+      <div class="flex items-center gap-2 mb-4 text-sm">
+        <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-text-muted">/</span>
+        <span class="text-sm text-ds-on-surface font-medium">News</span>
+      </div>
+
+      {/* Header */}
+      <div class="mb-8">
+        <h1 class="text-2xl md:text-4xl font-bold text-ds-on-surface tracking-tight mb-2">
+          Developer News
+        </h1>
+        <p class="text-ds-on-surface-variant text-base md:text-lg">
+          Latest daily updates, announcements, and key developer ecosystem insights.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 mt-4">
+          <a
+            href={`${BASE_PATH}/news/featured/`}
+            class="inline-flex items-center gap-1.5 text-sm text-ds-primary hover:underline font-medium"
+          >
+            <HugeiconsIcon icon={StarIcon} className="w-3.5 h-3.5" size={14} />
+            Featured
+          </a>
+          <a
+            href={`${BASE_PATH}/news/latest/`}
+            class="inline-flex items-center gap-1.5 text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
+          >
+            <HugeiconsIcon icon={Clock01Icon} className="w-3.5 h-3.5" size={14} />
+            Latest
+          </a>
+        </div>
+      </div>
+
+      {/* Sidebar Layout */}
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* News feed column */}
+        <div class="lg:col-span-2">
+          <PostsFeed client:load posts={newsItems} showSearch={true} />
+        </div>
+
+        <!-- Sidebar widgets -->
+        <div class="space-y-6">
+          <ListingSidebar type="news" categories={categoryItems} tags={tagItems} client:load />
+        </div>
+      </div>
+    </div>
+  </div>
+</AppShell>

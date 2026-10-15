@@ -1,0 +1,200 @@
+---
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  BookOpen02Icon,
+  Home01Icon,
+  File02Icon,
+  News01Icon,
+  GridIcon,
+  TagsIcon,
+  UserIcon,
+  StarIcon,
+  Clock01Icon,
+  RssIcon,
+  FavouriteIcon,
+  HelpCircleIcon,
+  ShieldIcon,
+  ExternalLinkIcon,
+  Briefcase01Icon,
+  CompassIcon,
+} from '@hugeicons/core-free-icons';
+import { NAV_LINKS, DISCOVER_LINKS, COMMUNITY_LINKS, BASE_PATH } from '@/config/site';
+import { SidebarInteractive } from '@/components/layout/SidebarInteractive';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '' } = Astro.props;
+
+function isActive(href: string): boolean {
+  if (href === `${BASE_PATH}/`) return currentPath === href;
+  return currentPath.startsWith(href);
+}
+
+const ICON_MAP: Record<string, any> = {
+  home: Home01Icon,
+  explore: CompassIcon,
+  article: File02Icon,
+  news: News01Icon,
+  category: GridIcon,
+  sell: TagsIcon,
+  person: UserIcon,
+  organisation: Briefcase01Icon,
+  star: StarIcon,
+  schedule: Clock01Icon,
+  rss_feed: RssIcon,
+  favorite: FavouriteIcon,
+  help: HelpCircleIcon,
+  policy: ShieldIcon,
+  guide: BookOpen02Icon,
+};
+---
+
+<aside
+  id="left-sidebar"
+  class="hidden md:flex flex-col fixed left-0 top-16 bottom-0 w-(--sidebar-width) bg-ds-surface-low border-r border-ds-outline-variant overflow-hidden z-40"
+>
+  <nav class="flex flex-col gap-0.5 p-3 h-full overflow-y-auto">
+    <div class="hidden md:flex items-center pb-2 border-b border-ds-outline-variant mb-2 justify-between px-2" id="sidebar-header">
+      <span class="text-[10px] font-bold uppercase tracking-wider text-ds-text-muted sidebar-label">Menu</span>
+      <SidebarInteractive client:load desktop={true} />
+    </div>
+
+    <div class="space-y-0.5">
+      {NAV_LINKS.map((link) => {
+        const icon = ICON_MAP[link.icon];
+        return (
+          <a
+            href={link.href}
+            class:list={[
+              'flex items-center rounded-lg text-sm font-medium gap-3 px-3 py-2',
+              isActive(link.href)
+                ? 'bg-ds-primary-container text-ds-on-primary-container'
+                : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
+            ]}
+            title={link.label}
+          >
+            {icon && <HugeiconsIcon icon={icon} className="w-5 h-5 shrink-0" size={18} />}
+            <span class="text-xs font-bold tracking-wide uppercase truncate sidebar-label">{link.label}</span>
+          </a>
+        );
+      })}
+    </div>
+
+    <div class="border-t border-ds-outline-variant my-2"></div>
+    <div class="px-3 pb-1 sidebar-label-wrapper">
+      <span class="text-[10px] font-bold tracking-widest uppercase text-ds-text-muted">Discover</span>
+    </div>
+    <div class="space-y-0.5">
+      {DISCOVER_LINKS.map((link) => {
+        const icon = ICON_MAP[link.icon];
+        return (
+          <a
+            href={link.href}
+            class:list={[
+              'flex items-center rounded-lg text-sm font-medium gap-3 px-3 py-2',
+              isActive(link.href)
+                ? 'bg-ds-primary-container text-ds-on-primary-container'
+                : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
+            ]}
+            title={link.label}
+          >
+            {icon && <HugeiconsIcon icon={icon} className="w-5 h-5 shrink-0" size={18} />}
+            <span class="text-xs font-bold tracking-wide uppercase truncate sidebar-label">{link.label}</span>
+          </a>
+        );
+      })}
+    </div>
+
+    <div class="border-t border-ds-outline-variant my-2"></div>
+    <div class="px-3 pb-1 sidebar-label-wrapper">
+      <span class="text-[10px] font-bold tracking-widest uppercase text-ds-text-muted">Community</span>
+    </div>
+    <div class="space-y-0.5">
+      {COMMUNITY_LINKS.map((link) => {
+        const icon = ICON_MAP[link.icon];
+        return (
+          <a
+            href={link.href}
+            target={link.external ? '_blank' : undefined}
+            rel={link.external ? 'noopener noreferrer' : undefined}
+            class:list={[
+              'flex items-center rounded-lg text-sm font-medium gap-3 px-3 py-2',
+              isActive(link.href)
+                ? 'bg-ds-primary-container text-ds-on-primary-container'
+                : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
+            ]}
+            title={link.label}
+          >
+            {icon && <HugeiconsIcon icon={icon} className="w-5 h-5 shrink-0" size={18} />}
+            <span class="text-xs font-bold tracking-wide uppercase truncate sidebar-label">{link.label}</span>
+            {link.external && <HugeiconsIcon icon={ExternalLinkIcon} className="w-3.5 h-3.5 ml-auto opacity-40 sidebar-label" size={14} />}
+          </a>
+        );
+      })}
+    </div>
+  </nav>
+</aside>
+
+<SidebarInteractive client:load mobile={true} currentPath={currentPath} />
+
+<style>
+  :global(.sidebar-collapsed) #left-sidebar .sidebar-label {
+    display: none;
+  }
+  :global(.sidebar-collapsed) #left-sidebar a:not(.new-post-btn) {
+    justify-content: center;
+    padding: 0.625rem;
+    gap: 0;
+  }
+  :global(.sidebar-collapsed) #left-sidebar .sidebar-label-wrapper {
+    display: none;
+  }
+  :global(.sidebar-collapsed) #left-sidebar #sidebar-header {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  :global(.sidebar-collapsed) #left-sidebar .new-post-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+  :global(.sidebar-collapsed) #left-sidebar .new-post-btn {
+    width: auto;
+    padding: 0.625rem;
+    border-radius: 0.5rem;
+  }
+</style>
+
+<script>
+  import { BASE_PATH } from '@/config/site';
+
+  function updateActiveLinks() {
+    const currentPath = window.location.pathname;
+    const sidebar = document.getElementById('left-sidebar');
+    if (!sidebar) return;
+
+    const links = sidebar.querySelectorAll('nav a');
+    links.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      // Handle base path matching and sub-routes
+      const isActive = href === `${BASE_PATH}/`
+        ? currentPath === href
+        : currentPath.startsWith(href);
+
+      if (isActive) {
+        link.classList.add('bg-ds-primary-container', 'text-ds-on-primary-container');
+        link.classList.remove('text-ds-on-surface-variant', 'hover:text-ds-on-surface', 'hover:bg-ds-surface-high');
+      } else {
+        link.classList.remove('bg-ds-primary-container', 'text-ds-on-primary-container');
+        link.classList.add('text-ds-on-surface-variant', 'hover:text-ds-on-surface', 'hover:bg-ds-surface-high');
+      }
+    });
+  }
+
+  // Update on page load and page transitions
+  document.addEventListener('astro:page-load', updateActiveLinks);
+</script>

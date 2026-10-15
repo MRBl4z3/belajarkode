@@ -1,0 +1,174 @@
+---
+import { getEntry, render } from 'astro:content';
+import PostLayout from '@/layouts/PostLayout.astro';
+import Prose from '@/components/common/Prose.astro';
+import { CodeCopyButtons } from '@/components/common/CodeCopy';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Clock01Icon } from '@hugeicons/core-free-icons';
+import { BASE_PATH, OWNER, SITE_CONFIG } from '@/config/site';
+import { getAuthorsBySlugs, getOrganisationsBySlugs } from '@/lib/posts';
+import { getInitials } from '@/lib/utils';
+
+const guide = await getEntry('guides', 'publishing-guide');
+if (!guide) {
+  return new Response('Guide not found', { status: 404 });
+}
+
+const { Content, headings } = await render(guide);
+
+const guideAuthorsList = guide.data.authors && guide.data.authors.length > 0
+  ? guide.data.authors
+  : [];
+const authorList = await getAuthorsBySlugs(guideAuthorsList);
+
+const guideOrgsList = guide.data.organisations && guide.data.organisations.length > 0
+  ? guide.data.organisations
+  : [];
+const orgList = guideOrgsList.length > 0
+  ? await getOrganisationsBySlugs(guideOrgsList)
+  : [];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: guide.data.title,
+  description: guide.data.description,
+  author: authorList.map((a) => ({
+    '@type': 'Person',
+    name: a.data.name,
+    url: a.data.website || a.data.portfolio || `${SITE_CONFIG.url}${BASE_PATH}/authors/${a.id.replace(/\.md$/, '')}/`,
+    sameAs: [a.data.github, a.data.twitter, a.data.linkedin].filter(Boolean),
+  })),
+  publisher: {
+    '@type': 'Person',
+    name: OWNER.name,
+    url: OWNER.portfolio,
+  },
+  mainEntityOfPage: {
+    '@type': 'WebSite',
+    '@id': `${SITE_CONFIG.url}${BASE_PATH}/guide/`,
+  },
+  datePublished: guide.data.datePublished || '2025-01-01',
+  dateModified: guide.data.dateModified || new Date().toISOString().split('T')[0],
+  inLanguage: 'en',
+  keywords: guide.data.keywords || 'developer resources, publishing guide, GitHub, content management, pull request',
+};
+
+const heroImage = guide.data.heroImage || "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&h=420&q=80";
+---
+
+<PostLayout
+  title={guide.data.title}
+  description={guide.data.description || ''}
+  headings={headings}
+  keywords={guide.data.keywords || ''}
+  ogImage={heroImage}
+>
+  <Fragment slot="head">
+    <meta property="article:author" content={OWNER.name} />
+    <meta property="article:published_time" content={guide.data.datePublished || '2025-01-01'} />
+    <meta property="article:modified_time" content={guide.data.dateModified || new Date().toISOString().split('T')[0]} />
+  </Fragment>
+
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- Hero Banner & Header -->
+  <div class="relative">
+    {heroImage && (
+      <div class="relative h-48 md:h-80 overflow-hidden rounded-2xl mb-6">
+        <img
+          src={heroImage}
+          alt={guide.data.title}
+          class="w-full h-full object-cover opacity-80 dark:opacity-60"
+        />
+        <div
+          class="absolute inset-0"
+          style="background: linear-gradient(to bottom, transparent 30%, var(--background) 100%)"
+        />
+      </div>
+    )}
+
+    <div class="px-4 sm:px-6 md:px-8 xl:px-10 pb-6">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <a href={`${BASE_PATH}/`} class="text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+          <span class="text-ds-text-muted">/</span>
+          <span class="text-sm text-ds-on-surface font-medium">Guide</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-ds-on-surface tracking-tight mb-3 leading-tight">
+          {guide.data.title}
+        </h1>
+        {guide.data.description && (
+          <p class="text-ds-on-surface-variant text-base md:text-lg leading-relaxed max-w-3xl">
+            {guide.data.description}
+          </p>
+        )}
+        <div class="flex flex-wrap items-center gap-4 text-sm mt-5">
+          {authorList.map((authorObj) => {
+            const authorSlug = authorObj.id.replace(/\.md$/, '');
+            const authorData = authorObj.data;
+            return (
+              <div class="flex items-center gap-2">
+                <a
+                  href={`${BASE_PATH}/authors/${authorSlug}/`}
+                  class="flex items-center gap-2 text-ds-on-surface-variant hover:text-ds-on-surface transition-colors"
+                >
+                  {authorData?.avatar ? (
+                    <img
+                      src={authorData.avatar}
+                      alt={authorData.name}
+                      class="w-7 h-7 rounded-full object-cover ring-1 ring-ds-outline-variant"
+                      loading="lazy"
+                      crossorigin="anonymous"
+                    />
+                  ) : (
+                    <div class="w-7 h-7 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-[10px] font-bold">
+                      {getInitials(authorData?.name || OWNER.name)}
+                    </div>
+                  )}
+                  <span class="font-medium">{authorData?.name || OWNER.name}</span>
+                </a>
+              </div>
+            );
+          })}
+
+          {orgList.length > 0 && (
+            <>
+              <span class="text-ds-outline">·</span>
+              <span class="text-ds-text-muted">via</span>
+              {orgList.map((orgObj, idx) => {
+                const orgSlug = orgObj.id.replace(/\.md$/, '');
+                return (
+                  <a
+                    href={`${BASE_PATH}/organisations/${orgSlug}/`}
+                    class="text-ds-primary hover:underline font-semibold"
+                  >
+                    {orgObj.data.name}
+                    {idx < orgList.length - 1 && <span class="text-ds-outline-variant">,</span>}
+                  </a>
+                );
+              })}
+            </>
+          )}
+
+          <span class="text-ds-outline">·</span>
+
+          <span class="flex items-center gap-1 text-ds-text-muted">
+            <HugeiconsIcon icon={Clock01Icon} className="w-4 h-4 shrink-0" size={14} strokeWidth={1.5} />
+            <span>10 min read</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="py-4">
+    <div class="max-w-4xl mx-auto px-4 md:px-6">
+      <Prose>
+        <Content />
+      </Prose>
+
+      <CodeCopyButtons client:load />
+    </div>
+  </div>
+</PostLayout>

@@ -1,0 +1,430 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { PostsFeed } from '@/components/post/PostsFeed';
+import { NewsCard } from '@/components/news/NewsCard';
+import Prose from '@/components/common/Prose.astro';
+import { MagicCard } from '@/components/ui/magic-card';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  ArrowLeft01Icon,
+  Location01Icon,
+  CheckmarkCircle01Icon,
+  File02Icon,
+  GithubIcon,
+  NewTwitterIcon,
+  InstagramIcon,
+  LinkedinIcon,
+  Globe02Icon,
+  FavouriteIcon,
+  Briefcase01Icon,
+  Calendar01Icon,
+  News01Icon,
+} from '@hugeicons/core-free-icons';
+import { render, getCollection } from 'astro:content';
+import { BASE_PATH, SITE_CONFIG } from '@/config/site';
+import {
+  getAllAuthors,
+  getPostReadingTime,
+  getPostsByAuthor,
+  getOrganisationsForAuthor,
+  getAllNews,
+} from '@/lib/posts';
+
+export async function getStaticPaths() {
+  const authors = await getAllAuthors();
+  return authors.map((author) => ({
+    params: { author: author.id.replace(/\.md$/, '') },
+    props: { author },
+  }));
+}
+
+const { author } = Astro.props;
+const slug = author.id.replace(/\.md$/, '');
+const posts = await getPostsByAuthor(slug);
+const { Content } = await render(author);
+
+const allNews = await getAllNews();
+const authorNews = allNews
+  .filter((n) => n.data.authors.includes(slug))
+  .sort((a, b) => b.data.datePublished.valueOf() - a.data.datePublished.valueOf());
+
+const authorOrgs = await getOrganisationsForAuthor(slug);
+const authorOrg = authorOrgs[0] || null;
+
+const linkedOrgSlugs = authorOrgs.map((o) => o.id.replace(/\.md$/, ''));
+const allAuthors = await getAllAuthors();
+const coAuthors = allAuthors.filter((a) => {
+  const aSlug = a.id.replace(/\.md$/, '');
+  if (aSlug === slug) return false;
+  const orgMatch = a.data.organisation && linkedOrgSlugs.includes(a.data.organisation);
+  const orgsMatch = a.data.organisations && a.data.organisations.some((org) => linkedOrgSlugs.includes(org));
+  return orgMatch || orgsMatch;
+});
+
+const postItems = posts.map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  authors: p.data.authors,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+}));
+
+interface Social {
+  key: string;
+  icon: any;
+  href: string | undefined;
+  label: string;
+}
+
+const socials: Social[] = [
+  {
+    key: 'github',
+    icon: GithubIcon,
+    href: author.data.github,
+    label: 'GitHub',
+  },
+  {
+    key: 'twitter',
+    icon: NewTwitterIcon,
+    href: author.data.twitter,
+    label: 'Twitter / X',
+  },
+  {
+    key: 'instagram',
+    icon: InstagramIcon,
+    href: author.data.instagram,
+    label: 'Instagram',
+  },
+  {
+    key: 'linkedin',
+    icon: LinkedinIcon,
+    href: author.data.linkedin,
+    label: 'LinkedIn',
+  },
+  {
+    key: 'website',
+    icon: Globe02Icon,
+    href: author.data.website,
+    label: 'Website',
+  },
+  {
+    key: 'sponsor',
+    icon: FavouriteIcon,
+    href: author.data.sponsor,
+    label: 'Sponsor',
+  },
+].filter(
+  (s): s is Social & { href: string } =>
+    typeof s.href === 'string' && s.href.trim().length > 0,
+);
+
+const authorJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: author.data.name,
+  description: author.data.bio,
+  image: author.data.avatar,
+  url: author.data.website || author.data.portfolio || `${SITE_CONFIG.url}${BASE_PATH}/authors/${slug}/`,
+  jobTitle: author.data.title,
+  email: author.data.email,
+  telephone: author.data.phoneNumber,
+  address: author.data.location ? {
+    '@type': 'PostalAddress',
+    addressLocality: author.data.location,
+  } : undefined,
+  sameAs: [
+    author.data.github,
+    author.data.twitter,
+    author.data.instagram,
+    author.data.linkedin,
+    author.data.website,
+    author.data.portfolio,
+  ].filter(Boolean),
+  worksFor: authorOrgs.length > 0 ? authorOrgs.map(org => ({
+    '@type': 'Organization',
+    name: org.data.name,
+    url: org.data.website || `${SITE_CONFIG.url}${BASE_PATH}/organisations/${org.id.replace(/\.md$/, '')}/`,
+  })) : [
+    {
+      '@type': 'Organization',
+      name: SITE_CONFIG.name,
+    }
+  ],
+};
+---
+
+<AppShell
+  title={author.data.name}
+  description={author.data.bio ?? `Posts by ${author.data.name}`}
+  ogImage={author.data.avatar}
+  keywords={`${author.data.name}, ${author.data.title ?? 'author'}, developer, contributor`}
+>
+
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(authorJsonLd)} />
+  </Fragment>
+  <div class="px-4 md:px-6 pb-16">
+      <div class="max-w-320 mx-auto">
+
+      <!-- Breadcrumbs -->
+      <div class="flex items-center gap-2 mb-6 pt-4 text-sm">
+        <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-text-muted">/</span>
+        <a href={`${BASE_PATH}/authors/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Authors</a>
+        <span class="text-ds-text-muted">/</span>
+        <span class="text-sm text-ds-on-surface font-medium truncate max-w-[200px]">{author.data.name}</span>
+      </div>
+
+      <!-- Author Hero Card -->
+      <MagicCard
+        className="rounded-xl mb-10"
+        gradientSize={200}
+        gradientColor="var(--ds-magic-glow)"
+        gradientFrom="var(--ds-magic-glow-from)"
+        gradientTo="var(--ds-magic-glow-to)"
+        client:load
+      >
+        <div class="p-6 md:p-8 flex flex-col sm:flex-row items-start gap-6">
+
+          <!-- Avatar -->
+          <div class="shrink-0 relative overflow-hidden w-24 h-24 md:w-28 md:h-28 rounded-full ring-4 ring-ds-outline-variant ring-offset-2 ring-offset-ds-surface-card">
+            {author.data.avatar ? (
+              <img
+                src={author.data.avatar}
+                alt={author.data.name}
+                class="w-full h-full object-cover"
+                crossorigin="anonymous"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+              />
+            ) : null}
+            <div class="w-full h-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-3xl font-bold" style={author.data.avatar ? "display: none;" : "display: flex;"}>
+              {author.data.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+            </div>
+          </div>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-ds-on-surface leading-tight">
+                  {author.data.name}
+                </h1>
+                {author.data.title && (
+                  <p class="text-ds-secondary font-medium mt-0.5 text-base">
+                    {author.data.title}
+                  </p>
+                )}
+                {authorOrgs.length > 0 && (
+                  <p class="text-sm text-ds-text-muted mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                    <HugeiconsIcon icon={Briefcase01Icon} className="w-3.5 h-3.5" size={14} />
+                    <span>Works at / Associated with:</span>
+                    {authorOrgs.map((org, index) => {
+                      const orgSlug = org.id.replace(/\.md$/, '');
+                      return (
+                        <>
+                          <a href={`${BASE_PATH}/organisations/${orgSlug}/`} class="text-ds-primary hover:underline font-semibold">{org.data.name}</a>
+                          {index < authorOrgs.length - 1 && <span class="text-ds-outline-variant">,</span>}
+                        </>
+                      );
+                    })}
+                  </p>
+                )}
+                {author.data.location && (
+                  <p class="text-sm text-ds-text-muted mt-1 flex items-center gap-1">
+                    <HugeiconsIcon icon={Location01Icon} className="w-3.5 h-3.5" size={14} />
+                    {author.data.location}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {author.data.bio && (
+              <p class="text-sm md:text-base text-ds-on-surface-variant mt-4 max-w-2xl leading-relaxed">
+                {author.data.bio}
+              </p>
+            )}
+
+            <!-- Socials -->
+            {socials.length > 0 && (
+              <div class="flex flex-wrap gap-2 mt-5">
+                {socials.map((social) => (
+                  <a
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={social.label}
+                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm border border-ds-outline-variant text-ds-on-surface-variant hover:border-ds-primary hover:text-ds-on-surface hover:bg-ds-surface-high transition-all duration-150"
+                  >
+                    <HugeiconsIcon icon={social.icon} className="w-4 h-4" size={16} aria-hidden="true" />
+                    <span class="hidden sm:inline">{social.label}</span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </MagicCard>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <!-- Posts feed -->
+        <div class="lg:col-span-2 space-y-6">
+          {/* Author bio content if any */}
+          {author.body && author.body.trim() && (
+            <div class="card-ds p-6">
+              <h2 class="text-lg font-semibold text-ds-on-surface mb-4 flex items-center gap-2">
+                <HugeiconsIcon icon={CheckmarkCircle01Icon} className="w-4.5 h-4.5 text-ds-primary" size={18} />
+                About
+              </h2>
+              <Prose>
+                <Content />
+              </Prose>
+            </div>
+          )}
+
+          <div>
+            <h2 class="text-xl font-semibold text-ds-on-surface mb-5 flex items-center gap-2">
+              <HugeiconsIcon icon={File02Icon} className="w-5 h-5 text-ds-secondary" size={20} />
+              Posts by {author.data.name}
+            </h2>
+
+            {postItems.length === 0 ? (
+              <div class="card-ds p-10 text-center text-ds-text-muted">
+                <HugeiconsIcon icon={File02Icon} className="w-12 h-12 mx-auto mb-3 opacity-30" size={48} />
+                <p>No posts yet by this author.</p>
+              </div>
+            ) : (
+              <PostsFeed client:load posts={postItems} />
+            )}
+          </div>
+
+          {authorNews.length > 0 && (
+            <div class="mt-10">
+              <h2 class="text-xl font-semibold text-ds-on-surface mb-5 flex items-center gap-2">
+                <HugeiconsIcon icon={News01Icon} className="w-5 h-5 text-ds-primary" size={20} />
+                News from {author.data.name}
+              </h2>
+              <div class="space-y-4">
+                {authorNews.map((newsItem) => {
+                  const newsSlug = newsItem.id.replace(/\.md$/, '');
+                  const newsItemData = {
+                    slug: newsSlug,
+                    title: newsItem.data.title,
+                    description: newsItem.data.description,
+                    pubDate: newsItem.data.datePublished.toISOString(),
+                    authors: newsItem.data.authors,
+                    category: newsItem.data.category,
+                    tags: newsItem.data.tags,
+                    thumbnail: newsItem.data.thumbnail,
+                    sources: newsItem.data.sources,
+                  };
+                  return (
+                    <NewsCard news={newsItemData} view="list" client:load />
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <!-- Right sidebar -->
+        <div class="space-y-6">
+          <!-- Organisations covered -->
+          {authorOrgs.length > 0 && (
+            <div class="card-ds p-5">
+              <h3 class="text-sm font-bold uppercase tracking-widest text-ds-text-muted mb-4">Associated Organisations</h3>
+              <div class="space-y-3">
+                {authorOrgs.map((org) => {
+                  const orgSlug = org.id.replace(/\.md$/, '');
+                  return (
+                    <a
+                      href={`${BASE_PATH}/organisations/${orgSlug}/`}
+                      class="flex items-center gap-3 p-2 rounded-lg border border-ds-outline-variant hover:border-ds-primary hover:bg-ds-surface-high/30 group"
+                    >
+                      <div class="w-8 h-8 rounded-lg overflow-hidden shrink-0 bg-ds-surface-high border border-ds-outline-variant flex items-center justify-center">
+                        {org.data.avatar ? (
+                          <img src={org.data.avatar} alt={org.data.name} class="max-w-full max-h-full object-contain p-0.5" />
+                        ) : (
+                          <span class="text-xs font-bold text-ds-primary">{org.data.name[0]}</span>
+                        )}
+                      </div>
+                      <span class="text-sm font-semibold text-ds-on-surface group-hover:text-ds-primary truncate">{org.data.name}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <!-- Colleagues -->
+          {coAuthors.length > 0 && (
+            <div class="card-ds p-5">
+              <h3 class="text-sm font-bold uppercase tracking-widest text-ds-text-muted mb-4">Organisation Colleagues</h3>
+              <div class="space-y-3">
+                {coAuthors.map((coAuthor) => {
+                  const coAuthorSlug = coAuthor.id.replace(/\.md$/, '');
+                  return (
+                    <a
+                      href={`${BASE_PATH}/authors/${coAuthorSlug}/`}
+                      class="flex items-center gap-3 p-2 rounded-lg border border-ds-outline-variant hover:border-ds-primary hover:bg-ds-surface-high/30 group"
+                    >
+                      <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-ds-outline-variant group-hover:ring-ds-primary flex items-center justify-center">
+                        {coAuthor.data.avatar ? (
+                          <img src={coAuthor.data.avatar} alt={coAuthor.data.name} class="w-full h-full object-cover" />
+                        ) : (
+                          <span class="text-xs font-bold text-ds-primary">{coAuthor.data.name[0]}</span>
+                        )}
+                      </div>
+                      <div class="min-w-0">
+                        <span class="block text-sm font-semibold text-ds-on-surface group-hover:text-ds-primary truncate">{coAuthor.data.name}</span>
+                        {coAuthor.data.title && <span class="block text-[10px] text-ds-text-muted truncate">{coAuthor.data.title}</span>}
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <!-- Categories covered -->
+          {[...new Set(postItems.flatMap(p => p.categories))].length > 0 && (
+            <div class="card-ds p-5">
+              <h3 class="text-sm font-bold uppercase tracking-widest text-ds-text-muted mb-4">Categories</h3>
+              <div class="flex flex-wrap gap-2">
+                {[...new Set(postItems.flatMap(p => p.categories))].map(cat => (
+                  <a
+                    href={`${BASE_PATH}/categories/${cat}/`}
+                    class="tag-ds"
+                  >
+                    {cat}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Tags covered -->
+          {[...new Set(postItems.flatMap(p => p.tags))].length > 0 && (
+            <div class="card-ds p-5">
+              <h3 class="text-sm font-bold uppercase tracking-widest text-ds-text-muted mb-4">Tags</h3>
+              <div class="flex flex-wrap gap-2">
+                {[...new Set(postItems.flatMap(p => p.tags))].map(tag => (
+                  <a
+                    href={`${BASE_PATH}/tags/${tag}/`}
+                    class="tag-ds"
+                  >
+                    #{tag}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</AppShell>
