@@ -6,7 +6,7 @@ description: Learn how to use TanStack Query (formerly React Query) to manage se
 summary: Master data fetching, caching, and synchronization with TanStack Query.
 
 authors:
-  - e-learning
+  - royy
 
 categories:
   - react

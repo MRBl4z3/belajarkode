@@ -6,7 +6,7 @@ description: A beginner-friendly guide to getting started with React. Hooks, com
 summary: Learn React fundamentals quickly with practical examples and clear explanations.
 
 authors:
-  - e-learning
+  - royy
 organisations:
   - google
 

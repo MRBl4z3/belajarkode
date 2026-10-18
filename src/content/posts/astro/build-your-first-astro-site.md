@@ -6,7 +6,7 @@ description: Astro is the web framework for content-driven websites. Learn how t
 summary: From zero to deployed. Build a blazing-fast site with Astro's island architecture.
 
 authors:
-  - e-learning
+  - royy
 
 categories:
   - web-development

@@ -6,7 +6,7 @@ description: Rust is a systems programming language focused on safety, speed, an
 summary: A practical introduction to Rust programming language. Ownership, borrowing, and memory safety.
 
 authors:
-  - e-learning
+  - royy
 
 categories:
   - rust
