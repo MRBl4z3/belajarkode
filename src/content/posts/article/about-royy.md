@@ -32,41 +32,41 @@ language: English
 
 ## Hi, I'm Royy
 
-I'm a developer from Balikpapan, Indonesia, interested in building practical web applications, interactive tools, and software that solves real problems[cite: 1.2, 1.4].
+I'm a developer from Balikpapan, Indonesia, interested in building practical web applications, interactive tools, and software that solves real problems.
 
-I mainly work with Laravel, PHP, JavaScript, and Python[cite: 1.2, 1.4]. I also explore computer vision, hand tracking, database systems, and modern web technologies through personal projects and experiments[cite: 1.2, 1.4].
+I mainly work with Laravel, PHP, JavaScript, and Python. I also explore computer vision, hand tracking, database systems, and modern web technologies through personal projects and experiments.
 
-Besides building software, I create programming learning materials to help beginners understand coding through practical examples[cite: 1.2].
+Besides building software, I create programming learning materials to help beginners understand coding through practical examples.
 
 ## What I Work On
 
-- **Web Development:** Building websites, web applications, backend systems, and database-driven solutions with Laravel, PHP, JavaScript, HTML, and CSS[cite: 1.2, 1.4].
+- **Web Development:** Building websites, web applications, backend systems, and database-driven solutions with Laravel, PHP, JavaScript, HTML, and CSS.
 - **Python Development:** Creating utility programs, automation experiments, and interactive applications.
 - **Computer Vision:** Experimenting with OpenCV and MediaPipe to build real-time hand-tracking experiences.
-- **Database Systems:** Designing data structures and implementing features for inventory, transactions, and information management[cite: 1.2].
-- **Learning Materials:** Writing programming tutorials, practical exercises, and beginner-friendly educational resources[cite: 1.2].
+- **Database Systems:** Designing data structures and implementing features for inventory, transactions, and information management.
+- **Learning Materials:** Writing programming tutorials, practical exercises, and beginner-friendly educational resources.
 
 ## Projects
 
 ### Collaborative Web Portfolio & Professional Identity
-A personalized portfolio web project designed to highlight developer skills, project showcases, and professional identity[cite: 1.2].
+A personalized portfolio web project designed to highlight developer skills, project showcases, and professional identity.
 
-**Tech:** Web Development, HTML, CSS, JavaScript[cite: 1.2]
+**Tech:** Web Development, HTML, CSS, JavaScript
 
 ### Online POS & Inventory Management System
-An online point-of-sale and inventory management application concept built for retail businesses, supporting transaction recording, stock tracking, and sales reporting workflows[cite: 1.2].
+An online point-of-sale and inventory management application concept built for retail businesses, supporting transaction recording, stock tracking, and sales reporting workflows.
 
-**Tech:** Web Development, Database Management, PHP, Laravel[cite: 1.2]
+**Tech:** Web Development, Database Management, PHP, Laravel
 
 ### Interactive Company Profile & Technical Documentation
-An interactive company profile platform alongside technical documentation services, including repository README technical guides and SEO optimization reporting[cite: 1.2].
+An interactive company profile platform alongside technical documentation services, including repository README technical guides and SEO optimization reporting.
 
-**Tech:** Web Development, Documentation, Technical Writing, SEO[cite: 1.2]
+**Tech:** Web Development, Documentation, Technical Writing, SEO
 
 ### Admin Dashboard Custom UI Components
-Custom, responsive UI components crafted specifically for admin control panels and team section management interfaces[cite: 1.2].
+Custom, responsive UI components crafted specifically for admin control panels and team section management interfaces.
 
-**Tech:** Frontend Development, HTML, CSS, Modern UI Frameworks[cite: 1.2]
+**Tech:** Frontend Development, HTML, CSS, Modern UI Frameworks
 
 ### RetroLens
 
@@ -78,17 +78,17 @@ The development experiments include gesture-controlled portals, hand-responsive 
 
 ### Inventory Management System
 
-A web application concept focused on managing inventory, tracking stock quantities, and handling stock transfers between locations[cite: 1.2].
+A web application concept focused on managing inventory, tracking stock quantities, and handling stock transfers between locations.
 
-The project explores practical inventory workflows, structured data management, and optional QR code or RFID-based identification[cite: 1.2].
+The project explores practical inventory workflows, structured data management, and optional QR code or RFID-based identification.
 
-**Tech:** Web Development, Database Design[cite: 1.2]
+**Tech:** Web Development, Database Design
 
 ### SNC Coffee Shop
 
 A coffee shop ordering system concept designed around QR-based table ordering.
 
-The prototype explores table-specific ordering, buyer interfaces, and a cashier or admin workflow for managing orders[cite: 1.2].
+The prototype explores table-specific ordering, buyer interfaces, and a cashier or admin workflow for managing orders.
 
 **Tech:** HTML, CSS, JavaScript, Web Storage
 
@@ -106,23 +106,23 @@ A prototype for a Japanese e-commerce platform developed as a collaborative proj
 
 The work focuses on backend functionality and application structure, alongside frontend and UI/UX development handled as part of a team.
 
-**Tech:** Web Development, Backend Development, Database Design[cite: 1.2, 1.4]
+**Tech:** Web Development, Backend Development, Database Design
 
 ### E-Learning Platform Demo
 
 An educational web application prototype exploring online learning features and modern frontend development.
 
-The experiments involve course-oriented interfaces, Firebase integration, and component-based UI development[cite: 1.2].
+The experiments involve course-oriented interfaces, Firebase integration, and component-based UI development.
 
 **Tech:** Vue.js, Nuxt, Firebase, Vuetify
 
 ### SecureOps
 
-A database-focused project exploring structured information management with MySQL[cite: 1.2, 1.4].
+A database-focused project exploring structured information management with MySQL.
 
-The project provides a foundation for experimenting with database design, data relationships, and application-level data handling[cite: 1.2, 1.4].
+The project provides a foundation for experimenting with database design, data relationships, and application-level data handling.
 
-**Tech:** MySQL, Database Design[cite: 1.2, 1.4]
+**Tech:** MySQL, Database Design
 
 ## Why Belajar Kode
 
@@ -134,17 +134,17 @@ I believe learning to code should involve more than memorizing syntax. Building 
 
 ## Tech Stack
 
-**Backend:** Laravel, PHP[cite: 1.2]
+**Backend:** Laravel, PHP
 
-**Frontend:** HTML, CSS, JavaScript, Vue.js[cite: 1.2]
+**Frontend:** HTML, CSS, JavaScript, Vue.js
 
 **Programming:** Python, Java
 
-**Database:** MySQL, Firebase[cite: 1.2, 1.4]
+**Database:** MySQL, Firebase
 
 **Computer Vision:** OpenCV, MediaPipe
 
-**Tools:** Git, GitHub, Visual Studio Code[cite: 1.2, 1.4]
+**Tools:** Git, GitHub, Visual Studio Code
 
 ## Find Me Online
 
