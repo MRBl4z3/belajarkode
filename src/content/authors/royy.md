@@ -1,6 +1,6 @@
 ---
 name: Royy
-avatar: https://github.com/MRBl4z3.png
+avatar: /images/photo-on-01-04-26-at-2058-1.jpg
 bio: Full Stack Developer yang membangun website dan tools dengan React,
   Node.js, dan Python, serta menyusun materi belajar pemrograman.
 title: Full Stack Developer
