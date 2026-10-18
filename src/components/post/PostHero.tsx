@@ -15,6 +15,7 @@ interface PostHeroProps {
   categories: string[];
   tags: string[];
   authors: string[];
+  authorAvatars?: Record<string, string>;
   readingTime: number | string;
   license?: string;
   difficulty?: Difficulty;
@@ -43,6 +44,7 @@ export function PostHero({
   categories,
   tags,
   authors,
+  authorAvatars = {},
   readingTime,
   license,
   difficulty,
@@ -141,9 +143,17 @@ export function PostHero({
                 href={`${BASE_PATH}/authors/${author}/`}
                 className="flex items-center gap-2 text-ds-on-surface-variant hover:text-ds-on-surface transition-colors"
               >
-                <div className="w-7 h-7 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-[10px] font-bold shrink-0">
-                  {getInitials(author)}
-                </div>
+                <div className="w-7 h-7 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-[10px] font-bold shrink-0 overflow-hidden">
+  {authorAvatars[author] ? (
+    <img
+      src={authorAvatars[author]}
+      alt={author}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    getInitials(author)
+  )}
+</div>
                 <span className="font-medium capitalize text-sm">
                   {author.replace(/-/g, ' ')}
                 </span>
