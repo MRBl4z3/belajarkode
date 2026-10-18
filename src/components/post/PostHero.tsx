@@ -15,8 +15,7 @@ interface PostHeroProps {
   categories: string[];
   tags: string[];
   authors: string[];
-  authorAvatars?: Record<string, string>;
-  readingTime: number | string;
+  authorAvatars?: Record<string, string | undefined>;  readingTime: number | string;
   license?: string;
   difficulty?: Difficulty;
 }
