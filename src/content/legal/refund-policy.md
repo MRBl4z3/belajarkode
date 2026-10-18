@@ -5,7 +5,7 @@ description: Comprehensive Refund Policy for Belajar Kode. Explains refund eligi
 
 **Effective Date:** June 26, 2026
 **Last Updated:** June 26, 2026
-**Applicable To:** [https://mrbl4z3.github.io/belajarkode](https://mrbl4z3.github.io/belajarkode)
+**Applicable To:** [https://mrbl4z3.github.io](https://mrbl4z3.github.io)
 
 This Refund Policy explains the terms and conditions governing refunds for donations, sponsorships, and any paid services on Belajar Kode ("we," "us," or "our"). By making a donation or sponsorship, you acknowledge and agree to the terms outlined in this policy.
 

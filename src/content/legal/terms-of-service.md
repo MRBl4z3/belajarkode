@@ -5,7 +5,7 @@ description: Comprehensive Terms of Service for Belajar Kode. Governs your use o
 
 **Effective Date:** June 26, 2026
 **Last Updated:** June 26, 2026
-**Applicable To:** [https://mrbl4z3.github.io/belajarkode](https://mrbl4z3.github.io/belajarkode)
+**Applicable To:** [https://mrbl4z3.github.io](https://mrbl4z3.github.io)
 
 Welcome to Belajar Kode. These Terms of Service ("Terms") govern your access to and use of our website, services, and content (collectively, the "Platform"). By accessing or using our Platform, you agree to be bound by these Terms. If you do not agree to these Terms, you may not access or use our Platform.
 
@@ -13,7 +13,7 @@ Welcome to Belajar Kode. These Terms of Service ("Terms") govern your access to 
 
 ## 1. Acceptance of Terms
 
-By accessing or using our Platform, you acknowledge that you have read, understood, and agree to be bound by these Terms, our [Privacy Policy](/belajarkode/legal/privacy-policy/), and our [Cookie Policy](/belajarkode/legal/cookie-policy/). These Terms constitute a legally binding agreement between you and Belajar Kode.
+By accessing or using our Platform, you acknowledge that you have read, understood, and agree to be bound by these Terms, our [Privacy Policy](/legal/privacy-policy/), and our [Cookie Policy](/legal/cookie-policy/). These Terms constitute a legally binding agreement between you and Belajar Kode.
 
 ---
 
@@ -217,7 +217,7 @@ We may accept donations through other platforms. Each platform has its own terms
 
 ### 10.3 Refund Policy
 
-Please refer to our [Refund Policy](/belajarkode/legal/refund-policy/) for details on refunds for donations and sponsorships.
+Please refer to our [Refund Policy](/legal/refund-policy/) for details on refunds for donations and sponsorships.
 
 ---
 

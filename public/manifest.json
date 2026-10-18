@@ -2,8 +2,8 @@
   "name": "Belajar Kode - Curated Developer Resources",
   "short_name": "Belajar Kode",
   "description": "Curated developer resources, tutorials, and tools for modern web development",
-  "start_url": "/belajarkode/",
-  "scope": "/belajarkode/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0d1117",
   "theme_color": "#3fb950",
@@ -13,13 +13,13 @@
   "categories": ["education", "developer", "productivity"],
   "icons": [
     {
-      "src": "/belajarkode/favicon.svg",
+      "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/belajarkode/favicon.ico",
+      "src": "/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }
@@ -30,29 +30,29 @@
       "name": "Browse Posts",
       "short_name": "Posts",
       "description": "Browse all developer resources and tutorials",
-      "url": "/belajarkode/posts/",
-      "icons": [{ "src": "/belajarkode/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "url": "/posts/",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
     },
     {
       "name": "Browse Categories",
       "short_name": "Categories",
       "description": "Explore resources by category",
-      "url": "/belajarkode/categories/",
-      "icons": [{ "src": "/belajarkode/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "url": "/categories/",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
     },
     {
       "name": "Browse Tags",
       "short_name": "Tags",
       "description": "Browse resources by tag",
-      "url": "/belajarkode/tags/",
-      "icons": [{ "src": "/belajarkode/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "url": "/tags/",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
     },
     {
       "name": "Search",
       "short_name": "Search",
       "description": "Search for developer resources",
-      "url": "/belajarkode/search/",
-      "icons": [{ "src": "/belajarkode/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "url": "/search/",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
     }
   ]
 }

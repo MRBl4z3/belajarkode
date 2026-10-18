@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Site configuration - no .env needed
 export const SITE_URL = 'https://mrbl4z3.github.io';
-export const BASE_PATH = '/belajarkode';
+export const BASE_PATH = '/';
 export const SITE_FULL_URL = `${SITE_URL}${BASE_PATH}`;
 
 // Google Analytics and Google Tag Manager IDs
@@ -85,11 +85,11 @@ const rawOwner = {
   support: 'https://saweria.co/Royyss',
   email: 'rionuramadhan@gmail.com',
   newPost:
-    'https://github.com/MRBl4z3/belajarkode/new/main/src/content/posts',
+    'https://github.com/MRBl4z3/mrbl4z3.github.io/new/main/src/content/posts',
 };
 
 const rawGiscus = {
-  repo: 'MRBl4z3/belajarkode',
+  repo: 'MRBl4z3/mrbl4z3.github.io',
   repoId: '',
   category: 'Q&A',
   categoryId: '',

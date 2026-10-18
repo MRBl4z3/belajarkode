@@ -1,10 +1,10 @@
 const CACHE_NAME = 'belajarkode-cache-v1';
 const ASSETS_TO_CACHE = [
-  '/belajarkode/',
-  '/belajarkode/index.html',
-  '/belajarkode/manifest.json',
-  '/belajarkode/favicon.svg',
-  '/belajarkode/logo.png'
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/favicon.svg',
+  '/logo.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -94,7 +94,7 @@ self.addEventListener('fetch', (event) => {
         .catch(() => {
           // If offline and request is an HTML page, serve the home page fallback
           if (event.request.headers.get('accept')?.includes('text/html')) {
-            return caches.match('/belajarkode/');
+            return caches.match('/');
           }
         });
     })

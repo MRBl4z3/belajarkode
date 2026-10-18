@@ -1,18 +1,18 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mrbl4z3.github.io/belajarkode/sitemap-index.xml
+Sitemap: https://mrbl4z3.github.io/sitemap-index.xml
 
 # Disallow draft pages
-Disallow: /belajarkode/draft/
+Disallow: /draft/
 
 # Allow all other paths
-Allow: /belajarkode/posts/
-Allow: /belajarkode/categories/
-Allow: /belajarkode/tags/
-Allow: /belajarkode/authors/
-Allow: /belajarkode/search/
-Allow: /belajarkode/sponsor/
-Allow: /belajarkode/support/
-Allow: /belajarkode/guide/
-Allow: /belajarkode/legal/
+Allow: /posts/
+Allow: /categories/
+Allow: /tags/
+Allow: /authors/
+Allow: /search/
+Allow: /sponsor/
+Allow: /support/
+Allow: /guide/
+Allow: /legal/

@@ -5,7 +5,7 @@ description: Comprehensive Cookie Policy for Belajar Kode. Explains all cookies,
 
 **Effective Date:** June 26, 2026
 **Last Updated:** June 26, 2026
-**Applicable To:** [https://mrbl4z3.github.io/belajarkode](https://mrbl4z3.github.io/belajarkode)
+**Applicable To:** [https://mrbl4z3.github.io](https://mrbl4z3.github.io)
 
 This Cookie Policy explains how Belajar Kode ("we," "us," or "our") uses cookies, local storage, and similar tracking technologies when you visit our website. By continuing to use our website, you consent to the use of cookies and tracking technologies described in this policy.
 

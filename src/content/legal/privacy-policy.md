@@ -5,7 +5,7 @@ description: Comprehensive Privacy Policy for Belajar Kode. Details how we colle
 
 **Effective Date:** June 26, 2026
 **Last Updated:** June 26, 2026
-**Applicable To:** [https://mrbl4z3.github.io/belajarkode](https://mrbl4z3.github.io/belajarkode)
+**Applicable To:** [https://mrbl4z3.github.io](https://mrbl4z3.github.io)
 
 This Privacy Policy describes how Belajar Kode ("we," "us," or "our") collects, uses, stores, and protects your personal information when you visit our website, submit content, or interact with our services. By accessing or using our website, you agree to the practices described in this policy.
 
@@ -28,7 +28,7 @@ When you visit our website, we automatically collect certain information:
 - **Device Information:** Browser type and version, operating system, device type, screen resolution, and language preferences.
 - **Usage Data:** Pages visited, time spent on pages, click patterns, scroll depth, navigation paths, and referral sources.
 - **Network Information:** Anonymized IP address (truncated to the last octet), internet service provider, and approximate geographic location (country/city level only).
-- **Cookie Data:** Information collected through cookies and similar tracking technologies as described in our [Cookie Policy](/belajarkode/legal/cookie-policy/).
+- **Cookie Data:** Information collected through cookies and similar tracking technologies as described in our [Cookie Policy](/legal/cookie-policy/).
 
 ### 1.3 Information from Third Parties
 
