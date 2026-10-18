@@ -4,7 +4,7 @@ description: "Panduan dasar Python untuk pemula: instalasi, variabel, tipe data,
   percabangan, perulangan, fungsi, dan list sampai dictionary."
 summary: Belajar fundamental Python dari nol dengan contoh kode yang mudah dipraktikkan.
 authors:
-  - royy
+  - e-learning
 categories:
   - Python
 tags:
