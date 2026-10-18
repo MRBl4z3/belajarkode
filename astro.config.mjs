@@ -13,7 +13,7 @@ import { EventEmitter } from 'node:events';
 EventEmitter.defaultMaxListeners = 20;
 
 const SITE_URL = 'https://mrbl4z3.github.io';
-const BASE_PATH = '';
+const BASE_PATH = '/';
 
 function remarkReadingTime() {
   return (/** @type {any} */ tree, /** @type {any} */ file) => {

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Site configuration - no .env needed
 export const SITE_URL = 'https://mrbl4z3.github.io';
-export const BASE_PATH = '/';
+export const BASE_PATH = '';
 export const SITE_FULL_URL = `${SITE_URL}${BASE_PATH}`;
 
 // Google Analytics and Google Tag Manager IDs
