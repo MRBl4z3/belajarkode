@@ -34,6 +34,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "Tidak ada berita baru."
           else
-            git commit -m "chore(news): auto update news from RSS feeds [skip ci]"
+            git commit -m "chore(news): auto update news from RSS feeds"
             git push
           fi
