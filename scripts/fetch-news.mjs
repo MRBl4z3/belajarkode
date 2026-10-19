@@ -36,13 +36,21 @@ function slugify(text) {
     .replace(/-+/g, '-');
 }
 
-function cleanContent(html) {
+// Membersihkan teks untuk ringkasan/meta description (tetap dipotong agar tidak terlalu panjang di card)
+function cleanDescription(html) {
   if (!html) return '';
   return html
     .replace(/<[^>]*>?/gm, '')
     .replace(/\s+/g, ' ')
     .trim()
-    .slice(0, 250) + '...';
+    .slice(0, 200) + '...';
+}
+
+// Membersihkan konten penuh tanpa memotong karakternya
+function cleanFullContent(html) {
+  if (!html) return '';
+  // Biarkan tag HTML-nya atau bersihkan spasi berlebih jika diperlukan
+  return html.trim();
 }
 
 async function run() {
@@ -55,7 +63,6 @@ async function run() {
     processedUrls = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf-8'));
   }
 
-  // Placeholder gambar tech jika feed tidak menyediakan thumbnail
   const DEFAULT_THUMBNAIL = "https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?auto=format&fit=crop&w=800&h=450&q=80";
 
   for (const source of FEEDS) {
@@ -70,9 +77,15 @@ async function run() {
         const title = item.title ? item.title.replace(/"/g, '\\"') : 'Untitled';
         const date = item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString();
         const slug = `${slugify(title).slice(0, 50)}-${Date.now()}`;
-        const description = cleanContent(item.contentSnippet || item.content || item.summary);
+        
+        // Ambil deskripsi singkat untuk meta frontmatter
+        const description = cleanDescription(item.contentSnippet || item.content || item.summary);
 
-        // Frontmatter lengkap yang sesuai dengan template Belajar Kode
+        // Ambil isi artikel secara utuh dari RSS feed
+        const rawContent = item['content:encoded'] || item.content || item.contentSnippet || '';
+        const fullContent = cleanFullContent(rawContent);
+
+        // Frontmatter dan isi markdown dengan fullContent
         const markdownContent = `---
 title: "${title}"
 description: "${description}"
@@ -87,7 +100,7 @@ keywords: ["${source.org}", "tech news", "developer"]
 canonicalUrl: "${itemUrl}"
 ---
 
-${description}
+${fullContent}
 
 ---
 *Artikel ini otomatis diambil dari [${source.name}](${itemUrl}). Baca artikel selengkapnya di sumber asli.*
